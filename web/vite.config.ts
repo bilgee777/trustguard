@@ -9,6 +9,10 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
+  build: {
+    // Never inline fonts as data: URIs; the production CSP only allows fonts from 'self'.
+    assetsInlineLimit: (file) => (/\.woff2?$/.test(file) ? false : undefined),
+  },
   server: { port: 5173, strictPort: true },
   preview: { port: 4173, strictPort: true },
   test: {
