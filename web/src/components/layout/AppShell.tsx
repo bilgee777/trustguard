@@ -3,7 +3,9 @@ import { Link, NavLink, Outlet, ScrollRestoration } from 'react-router';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { LogoMark } from './Logo';
+import { useUser } from '@/features/auth/session';
 import { useApplyTheme } from '@/lib/useApplyTheme';
+import { AccountControls } from './AccountControls';
 import { ThemeSwitcher } from './ThemeSwitcher';
 
 const NAV = [
@@ -14,9 +16,13 @@ const NAV = [
 ];
 
 function NavItems({ onNavigate, vertical = false }: { onNavigate?: () => void; vertical?: boolean }) {
+  const signedIn = useUser() !== null;
+  const items = signedIn
+    ? [...NAV.slice(0, 3), { to: '/history', label: 'History', end: false }, ...NAV.slice(3)]
+    : NAV;
   return (
     <ul className={cn('flex', vertical ? 'flex-col gap-1' : 'items-center gap-1')}>
-      {NAV.map((item) => (
+      {items.map((item) => (
         <li key={item.to}>
           <NavLink
             to={item.to}
@@ -67,6 +73,9 @@ export function AppShell() {
             <NavItems />
           </nav>
           <div className="ml-auto flex items-center gap-2">
+            <div className="hidden md:block">
+              <AccountControls />
+            </div>
             <ThemeSwitcher />
             <button
               type="button"
@@ -90,6 +99,14 @@ export function AppShell() {
                 setMenuOpen(false);
               }}
             />
+            <div className="mt-3 border-t border-line pt-3">
+              <AccountControls
+                stacked
+                onNavigate={() => {
+                  setMenuOpen(false);
+                }}
+              />
+            </div>
           </nav>
         )}
       </header>

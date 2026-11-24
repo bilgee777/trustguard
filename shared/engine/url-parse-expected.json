@@ -1,0 +1,1516 @@
+{
+ "cases": [
+  {
+   "input": "https://a.com/a^b|c{d}e`f",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/a^b|c%7Bd%7De%60f",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/?q=a b'c\"d<e>",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": "?q=a%20b%27c%22d%3Ce%3E"
+   }
+  },
+  {
+   "input": "https://us er:p@ss@a.com/",
+   "expected": {
+    "scheme": "https",
+    "username": "us%20er",
+    "password": "p%40ss",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://u^v|w:x/y@a.com/",
+   "expected": null
+  },
+  {
+   "input": "https://a.com/a b%zz",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/a%20b%zz",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://xn--a.com",
+   "expected": null
+  },
+  {
+   "input": "https://xn--99999999.com",
+   "expected": null
+  },
+  {
+   "input": "https://xn--abc-.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--abc-.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://xn--.com",
+   "expected": null
+  },
+  {
+   "input": "https://xn--pypal-4ve.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--pypal-4ve.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://xn--ls8h.la",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--ls8h.la",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://xn--mnchen-3ya.de",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--mnchen-3ya.de",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://XN--PYPAL-4VE.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--pypal-4ve.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://pаypal.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--pypal-4ve.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://MÜNCHEN.de",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--mnchen-3ya.de",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://faß.de",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--fa-hia.de",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://💩.la",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--ls8h.la",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://exa%6Dple.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://exa%zzmple.com",
+   "expected": null
+  },
+  {
+   "input": "https://a。b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://ｅｘａｍｐｌｅ.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https:///example.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https:example.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https:\\\\example.com\\x",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com\\path",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/path",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://1.2.3/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "1.2.0.3",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://0300.0250.0.1/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "192.168.0.1",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://4294967296/",
+   "expected": null
+  },
+  {
+   "input": "http://0x/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "0.0.0.0",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://1.2.3.4.5/",
+   "expected": null
+  },
+  {
+   "input": "http://256.1.1.1/",
+   "expected": null
+  },
+  {
+   "input": "http://1.2.3.4./",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "1.2.3.4",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://a.1/",
+   "expected": null
+  },
+  {
+   "input": "http://a.0x1/",
+   "expected": null
+  },
+  {
+   "input": "http://0x7f000001/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "127.0.0.1",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://0x08080808/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "8.8.8.8",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://2130706433/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "127.0.0.1",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://127.1/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "127.0.0.1",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://010.010.010.010/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "8.8.8.8",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[2001:db8::1]:8080/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[2001:db8::1]",
+    "port": "8080",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[::ffff:192.168.1.1]/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[::ffff:c0a8:101]",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[1:2:3:4:5:6:7:8]/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[1:2:3:4:5:6:7:8]",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[::]/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[::]",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[1::2::3]/",
+   "expected": null
+  },
+  {
+   "input": "http://[::1/",
+   "expected": null
+  },
+  {
+   "input": "http://[::1]/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[::1]",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[2001:0db8:0000:0000:0000:0000:0000:0001]/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[2001:db8::1]",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[1:0:0:2:0:0:0:3]/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "[1:0:0:2::3]",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://[fe80::1%25eth0]/",
+   "expected": null
+  },
+  {
+   "input": "http://[::1]:99999/",
+   "expected": null
+  },
+  {
+   "input": "https://example.com:99999/",
+   "expected": null
+  },
+  {
+   "input": "https://example.com:443/",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com:0080/",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "80",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http://example.com:80/",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com:/",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com:12a/",
+   "expected": null
+  },
+  {
+   "input": "https://a.com:1:2/",
+   "expected": null
+  },
+  {
+   "input": "ws://a.com:80/x",
+   "expected": {
+    "scheme": "ws",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "wss://a.com:443/x",
+   "expected": {
+    "scheme": "wss",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "ftp://a.com:21/x",
+   "expected": {
+    "scheme": "ftp",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "ftp://files.example.com/x",
+   "expected": {
+    "scheme": "ftp",
+    "username": "",
+    "password": "",
+    "hostname": "files.example.com",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com./",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com.",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a..b/",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a..b",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/a/../b/./c?x=1#frag",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/b/c",
+    "search": "?x=1"
+   }
+  },
+  {
+   "input": "https://example.com/a/%2e%2e/b",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/b",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/..",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com//a//b",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "//a//b",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/a/.",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/a/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/a/b/../../../c",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/c",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/a/%2E/b",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/a/b",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/%2e",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "file:///etc/passwd",
+   "expected": {
+    "scheme": "file",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/etc/passwd",
+    "search": ""
+   }
+  },
+  {
+   "input": "file://host/x",
+   "expected": {
+    "scheme": "file",
+    "username": "",
+    "password": "",
+    "hostname": "host",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "file:/x",
+   "expected": {
+    "scheme": "file",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "file://localhost/x",
+   "expected": {
+    "scheme": "file",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "tel:+123",
+   "expected": {
+    "scheme": "tel",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "+123",
+    "search": ""
+   }
+  },
+  {
+   "input": "mailto:a@b.com",
+   "expected": {
+    "scheme": "mailto",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "a@b.com",
+    "search": ""
+   }
+  },
+  {
+   "input": "data:text/html,hello world",
+   "expected": {
+    "scheme": "data",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "text/html,hello world",
+    "search": ""
+   }
+  },
+  {
+   "input": "javascript:alert(1)",
+   "expected": {
+    "scheme": "javascript",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "alert(1)",
+    "search": ""
+   }
+  },
+  {
+   "input": "JAVASCRIPT:alert(1)",
+   "expected": {
+    "scheme": "javascript",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "alert(1)",
+    "search": ""
+   }
+  },
+  {
+   "input": "vbscript:msgbox(1)",
+   "expected": {
+    "scheme": "vbscript",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "msgbox(1)",
+    "search": ""
+   }
+  },
+  {
+   "input": "myapp://Foo.Bar:22/x",
+   "expected": {
+    "scheme": "myapp",
+    "username": "",
+    "password": "",
+    "hostname": "Foo.Bar",
+    "port": "22",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "ssh://git@Example.com:22/repo",
+   "expected": {
+    "scheme": "ssh",
+    "username": "git",
+    "password": "",
+    "hostname": "Example.com",
+    "port": "22",
+    "pathname": "/repo",
+    "search": ""
+   }
+  },
+  {
+   "input": "foo:/bar",
+   "expected": {
+    "scheme": "foo",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/bar",
+    "search": ""
+   }
+  },
+  {
+   "input": "foo://",
+   "expected": {
+    "scheme": "foo",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "",
+    "search": ""
+   }
+  },
+  {
+   "input": "foo:bar baz  ",
+   "expected": {
+    "scheme": "foo",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "bar baz",
+    "search": ""
+   }
+  },
+  {
+   "input": "foo://a b/c",
+   "expected": null
+  },
+  {
+   "input": "https://",
+   "expected": null
+  },
+  {
+   "input": "https://@a.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://:@a.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com@",
+   "expected": null
+  },
+  {
+   "input": "https://user@/x",
+   "expected": null
+  },
+  {
+   "input": "https://user:pa:ss@a.com/",
+   "expected": {
+    "scheme": "https",
+    "username": "user",
+    "password": "pa%3Ass",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a@b@c.com/",
+   "expected": {
+    "scheme": "https",
+    "username": "a%40b",
+    "password": "",
+    "hostname": "c.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://%41%42@a.com/",
+   "expected": {
+    "scheme": "https",
+    "username": "%41%42",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://www.paypal.com@evil.example/login",
+   "expected": {
+    "scheme": "https",
+    "username": "www.paypal.com",
+    "password": "",
+    "hostname": "evil.example",
+    "port": "",
+    "pathname": "/login",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://www.paypal.com:secret@login-check.example/",
+   "expected": {
+    "scheme": "https",
+    "username": "www.paypal.com",
+    "password": "secret",
+    "hostname": "login-check.example",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://100%@evil.example/",
+   "expected": {
+    "scheme": "https",
+    "username": "100%",
+    "password": "",
+    "hostname": "evil.example",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "HTTP://EXAMPLE.COM/PATH",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/PATH",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/\ttab\nnl",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/tabnl",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com?",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com#",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/?#x",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/?a=1&b=2#f",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/",
+    "search": "?a=1&b=2"
+   }
+  },
+  {
+   "input": "https://a.com/p?q=é",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/p",
+    "search": "?q=%C3%A9"
+   }
+  },
+  {
+   "input": "https://a.com/é/中",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/%C3%A9/%E4%B8%AD",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/a b",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/a%20b",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/\"quote\"",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/%22quote%22",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/<tag>",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/%3Ctag%3E",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/a%20b",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/a%20b",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a.com/100%",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a.com",
+    "port": "",
+    "pathname": "/100%",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://exa mple.com",
+   "expected": null
+  },
+  {
+   "input": "https://exa<mple.com",
+   "expected": null
+  },
+  {
+   "input": "https://exa>mple.com",
+   "expected": null
+  },
+  {
+   "input": "https://exa^mple.com",
+   "expected": null
+  },
+  {
+   "input": "https://exa|mple.com",
+   "expected": null
+  },
+  {
+   "input": "https://exa#mple.com/x",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "exa",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://exa[mple.com",
+   "expected": null
+  },
+  {
+   "input": "https://a_b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a_b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a-b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a-b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://-a.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "-a.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a$b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a$b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a'b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a'b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a,b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a,b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a;b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a;b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a=b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "a=b.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "example.com",
+   "expected": null
+  },
+  {
+   "input": "",
+   "expected": null
+  },
+  {
+   "input": "   ",
+   "expected": null
+  },
+  {
+   "input": "https:// example.com",
+   "expected": null
+  },
+  {
+   "input": "https://example.com/ ",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/%C2%A0",
+    "search": ""
+   }
+  },
+  {
+   "input": "​https://example.com",
+   "expected": null
+  },
+  {
+   "input": "https://a​b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "ab.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://a­b.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "ab.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://exámple.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "xn--exmple-qta.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http:/\\example.com",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http:\\/example.com",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https:////example.com",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "http:example.com:8080/x",
+   "expected": {
+    "scheme": "http",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "8080",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://EXAMPLE.com:8443",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "8443",
+    "pathname": "/",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/path?x=%zz",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/path",
+    "search": "?x=%zz"
+   }
+  },
+  {
+   "input": "https://example.com/a\\b",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/a/b",
+    "search": ""
+   }
+  },
+  {
+   "input": "https://example.com/a?b\\c",
+   "expected": {
+    "scheme": "https",
+    "username": "",
+    "password": "",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/a",
+    "search": "?b\\c"
+   }
+  },
+  {
+   "input": "ssh://[::1]:22/x",
+   "expected": {
+    "scheme": "ssh",
+    "username": "",
+    "password": "",
+    "hostname": "[::1]",
+    "port": "22",
+    "pathname": "/x",
+    "search": ""
+   }
+  },
+  {
+   "input": "myapp://a%20b/c",
+   "expected": {
+    "scheme": "myapp",
+    "username": "",
+    "password": "",
+    "hostname": "a%20b",
+    "port": "",
+    "pathname": "/c",
+    "search": ""
+   }
+  },
+  {
+   "input": "myapp://exa mple",
+   "expected": null
+  },
+  {
+   "input": "custom:///path",
+   "expected": {
+    "scheme": "custom",
+    "username": "",
+    "password": "",
+    "hostname": "",
+    "port": "",
+    "pathname": "/path",
+    "search": ""
+   }
+  },
+  {
+   "input": "custom://user:pw@host:1/p?q",
+   "expected": {
+    "scheme": "custom",
+    "username": "user",
+    "password": "pw",
+    "hostname": "host",
+    "port": "1",
+    "pathname": "/p",
+    "search": "?q"
+   }
+  }
+ ]
+}

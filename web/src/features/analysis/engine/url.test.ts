@@ -85,3 +85,16 @@ describe('defangUrl', () => {
     expect(defangUrl('https://evil.example.com/a.b')).toBe('hxxps://evil[.]example[.]com/a.b');
   });
 });
+
+describe('malformed input never throws', () => {
+  it.each(['https://100%@evil.example/', 'https://%E0%A4%A@evil.example/', 'https://%@x.com', 'http://%zz:%zz@a.com'])(
+    'inspects %s',
+    (url) => {
+      expect(() => inspectUrl(url)).not.toThrow();
+    },
+  );
+
+  it('still flags the host behind a malformed userinfo', () => {
+    expect(inspectUrl('https://100%@evil.example/').findings.map((f) => f.ruleId)).toContain('url.userinfo');
+  });
+});

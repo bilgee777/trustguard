@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TrustGuard.Api/TrustGuard.Api.csproj" />
+    <Project Path="src/TrustGuard.Engine/TrustGuard.Engine.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TrustGuard.Api.Tests/TrustGuard.Api.Tests.csproj" />
+    <Project Path="tests/TrustGuard.Engine.Tests/TrustGuard.Engine.Tests.csproj" />
+  </Folder>
+</Solution>

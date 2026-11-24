@@ -1,0 +1,16 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+charset = utf-8
+insert_final_newline = true
+
+# The engine must behave identically on every machine and in every culture. Culture-sensitive
+# string APIs (IndexOf, StartsWith, Replace, ...) silently ignore zero-width characters under ICU,
+# which is exactly what attackers insert, so they are build errors here.
+dotnet_diagnostic.CA1307.severity = error
+dotnet_diagnostic.CA1309.severity = error
+dotnet_diagnostic.CA1310.severity = error
+dotnet_diagnostic.CA1311.severity = error
+dotnet_diagnostic.CA1862.severity = error

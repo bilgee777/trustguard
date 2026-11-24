@@ -108,3 +108,30 @@ Ownership is always reported in the ASCII (punycode) form, such as `xn--pypal-4v
 ## False-positive guards
 
 Specific tests protect against over-flagging: `purchase.com` must not match "chase", `pineapple.com` must not match "apple", ordinary sender domains are ignored, and an official Netflix link in a Netflix message is not impersonation.
+
+## Two engines, one contract
+
+The same engine exists in TypeScript (browser) and C# (server). Rule data is shared in [`shared/engine`](../shared/engine) and validated when it loads. Correctness across languages is enforced by golden files, not by hope:
+
+| File | Produced by | Asserted by |
+|---|---|---|
+| `parity-cases.json` | hand-written inputs | both |
+| `parity-expected.json` | the TypeScript engine (`npm run golden`) | the C# engine, the TypeScript engine, and CI (stale file fails the build) |
+| `url-parse-cases.json` and `url-parse-expected.json` | Node's `URL` implementation | the C# URL parser |
+
+The expected file compares scores, findings, evidence, spans, points, categories, highlights, recommendations, confidence and every URL check.
+
+What had to be handled explicitly to make results identical:
+
+- **Regex semantics.** A translation layer maps `\b`, `\d`, `\s`, `\w` and `.` to their JavaScript meaning. Probe messages (a Turkish letter before "verify", Arabic-Indic digits, `U+FEFF`, `U+2028`) fail on a plain port.
+- **Rounding.** `Math.round` rounds halves up; .NET rounds to even by default.
+- **Sorting.** JavaScript's sort is stable, and so are the LINQ ordering calls used in C#. `List.Sort` is not.
+- **String comparison.** All comparisons are ordinal. Culture-sensitive comparison silently ignores zero-width characters, which is exactly what attackers insert. This is enforced as a build error.
+- **Unicode.** Script detection uses an explicit range table in both languages instead of `\p{Script=...}`. Input is normalized (line endings, unpaired surrogates) the same way on both sides.
+- **URL parsing.** A WHATWG parser in C#, checked against Node on 148 URLs.
+
+### Known divergences
+
+- JavaScript's `u`-flag regexes count astral characters (emoji) as one unit inside bounded quantifiers such as `.{0,40}`; .NET counts UTF-16 units. A window at the boundary can differ. The golden file includes emoji cases and they match.
+- `ToLowerInvariant` and `toLowerCase` can differ for a few special characters (for example Turkish dotted `İ`).
+- The IDNA validity check is an approximation of the full UTS 46 tables.

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>TrustGuard.Engine</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Rule data is shared with the TypeScript engine and embedded at build time. -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\shared\engine\rules.json" LogicalName="TrustGuard.Engine.Data.rules.json" Link="Data\rules.json" />
+    <EmbeddedResource Include="..\..\..\shared\engine\brands.json" LogicalName="TrustGuard.Engine.Data.brands.json" Link="Data\brands.json" />
+    <EmbeddedResource Include="..\..\..\shared\engine\domains.json" LogicalName="TrustGuard.Engine.Data.domains.json" Link="Data\domains.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="TrustGuard.Engine.Tests" />
+  </ItemGroup>
+
+</Project>

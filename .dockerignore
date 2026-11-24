@@ -1,0 +1,18 @@
+# One ignore file for both images: they are built from the repository root so that web/ and api/ can both
+# reach shared/ (the engine rules both engines read).
+**/node_modules
+**/bin
+**/obj
+**/dist
+**/test-results
+**/playwright-report
+**/.env
+**/.env.*
+!**/.env.example
+.git
+.github
+docs
+db
+*.md
+web/e2e
+api/tests

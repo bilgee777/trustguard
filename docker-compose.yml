@@ -1,13 +1,84 @@
-# Phase 1: the web app only. The API and PostgreSQL services are added in phase 2.
+# The whole stack: PostgreSQL, the API and the web server (static files plus a reverse proxy to the API).
+#   cp .env.example .env   (then fill in the secrets)
+#   docker compose up --build
+# Only the web server is published, and only on 127.0.0.1. The database and the API are not reachable
+# from outside Docker, and the web server cannot reach the database at all.
+name: trustguard
+
 services:
-  web:
-    build: ./web
-    image: trustguard-web
-    ports:
-      - '127.0.0.1:8080:8080'
-    read_only: true
-    tmpfs:
-      - /tmp
-    security_opt:
-      - no-new-privileges:true
+  db:
+    image: postgres:18-alpine
     restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-trustguard}
+      POSTGRES_DB: ${POSTGRES_DB:-trustguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - trustguard-db:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    security_opt: ['no-new-privileges:true']
+    networks: [backend]
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: trustguard-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__Default: Host=db;Port=5432;Database=${POSTGRES_DB:-trustguard};Username=${POSTGRES_USER:-trustguard};Password=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:?Set JWT_SIGNING_KEY in .env}
+      Cookies__Secure: ${COOKIES_SECURE:-false}
+      # Convenient for one instance. With several replicas, run migrations as a separate step instead.
+      Database__MigrateOnStartup: 'true'
+      # Only the web container can reach the API, so trusting Docker's private ranges for X-Forwarded-* is safe.
+      Security__TrustedProxyNetworks__0: 172.16.0.0/12
+      Security__TrustedProxyNetworks__1: 192.168.0.0/16
+      Security__TrustedProxyNetworks__2: 10.0.0.0/8
+    healthcheck:
+      # The runtime image has no curl; a plain TCP request from bash is enough.
+      test:
+        - CMD
+        - bash
+        - -c
+        - "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /api/health/live HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    networks: [backend, frontend]
+
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    image: trustguard-web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:${WEB_PORT:-8080}:8080'
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']
+    networks: [frontend]
+
+networks:
+  backend:
+  frontend:
+
+volumes:
+  trustguard-db:

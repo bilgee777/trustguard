@@ -62,6 +62,9 @@ export function decodePunycodeLabel(input: string): string | null {
     i %= length;
     output.splice(i++, 0, n);
   }
+  // String.fromCodePoint throws a RangeError above U+10FFFF, and lone surrogates cannot be encoded
+  // as UTF-8/JSON, so neither can be a decoded label.
+  if (output.some((cp) => cp > 0x10ffff || (cp >= 0xd800 && cp <= 0xdfff))) return null;
   return String.fromCodePoint(...output);
 }
 

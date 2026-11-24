@@ -1,0 +1,27 @@
+# Dependabot opens pull requests for outdated packages and for security advisories, so fixes arrive
+# without anyone having to remember to look. Updates are grouped to keep the number of PRs manageable.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /web
+    schedule: { interval: weekly }
+    groups:
+      web-dependencies:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: nuget
+    directory: /api
+    schedule: { interval: weekly }
+    groups:
+      dotnet-dependencies:
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: docker
+    directory: /web
+    schedule: { interval: weekly }
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
