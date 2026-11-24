@@ -8,7 +8,7 @@ import { AnalyzerForm } from './AnalyzerForm';
 function ResultProbe() {
   const { id = '' } = useParams();
   const result = useAnalysisStore((s) => s.results[id]);
-  return <p>Result level: {result?.level}</p>;
+  return <p>Result level: {result?.result.level}</p>;
 }
 
 function setup() {

@@ -32,3 +32,6 @@ public sealed record UserDto(Guid Id, string Email, string DisplayName, Settings
 }
 
 public sealed record CsrfResponse(string CsrfToken);
+
+/// <summary>Always a 200: who is signed in (if anyone), and whether an expired session could be renewed.</summary>
+public sealed record SessionResponse(UserDto? User, bool CanRefresh);

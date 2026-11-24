@@ -266,4 +266,28 @@ public class AuthTests(ApiFixture api)
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.Equal("no_session", JsonSerializer.Deserialize<JsonElement>(await response.Content.ReadAsStringAsync()).GetProperty("code").GetString());
     }
+
+    [Fact]
+    public async Task SessionProbeAnswersOkForAnonymousVisitors()
+    {
+        var body = await TestSession.JsonAsync(await api.NewSession().GetAsync("/api/auth/session"));
+        Assert.Equal(JsonValueKind.Null, body.GetProperty("user").ValueKind);
+        Assert.False(body.GetProperty("canRefresh").GetBoolean());
+    }
+
+    [Fact]
+    public async Task SessionProbeReturnsTheUserAndTellsWhenAnExpiredSessionCanBeRenewed()
+    {
+        var email = TestSession.NewEmail();
+        var session = await api.NewSession().RegisteredAsync(email);
+
+        var signedIn = await TestSession.JsonAsync(await session.GetAsync("/api/auth/session"));
+        Assert.Equal(email, signedIn.GetProperty("user").GetProperty("email").GetString());
+        Assert.False(signedIn.GetProperty("canRefresh").GetBoolean());
+
+        api.Clock.Advance(TimeSpan.FromMinutes(20));
+        var expired = await TestSession.JsonAsync(await session.GetAsync("/api/auth/session"));
+        Assert.Equal(JsonValueKind.Null, expired.GetProperty("user").ValueKind);
+        Assert.True(expired.GetProperty("canRefresh").GetBoolean());
+    }
 }

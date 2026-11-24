@@ -7,6 +7,13 @@ import { PrivacyPage } from '@/pages/PrivacyPage';
 import { ResultPage } from '@/pages/ResultPage';
 import { RouteError } from '@/pages/RouteError';
 import { UrlInspectorPage } from '@/pages/UrlInspectorPage';
+import { ProtectedRoute } from '@/features/auth/ProtectedRoute';
+import { HistoryDetailPage } from '@/pages/HistoryDetailPage';
+import { HistoryPage } from '@/pages/HistoryPage';
+import { LoginPage } from '@/pages/LoginPage';
+import { RegisterPage } from '@/pages/RegisterPage';
+import { SessionEndedPage } from '@/pages/SessionEndedPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +25,17 @@ export const router = createBrowserRouter([
       { path: 'url-inspector', element: <UrlInspectorPage /> },
       { path: 'demo', element: <DemoPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'register', element: <RegisterPage /> },
+      { path: 'session-ended', element: <SessionEndedPage /> },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { path: 'history', element: <HistoryPage /> },
+          { path: 'history/:id', element: <HistoryDetailPage /> },
+          { path: 'settings', element: <SettingsPage /> },
+        ],
+      },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

@@ -62,6 +62,16 @@ public static class AuthEndpoints
             })
             .WithSummary("Ends the session and clears its cookies.");
 
+        group.MapGet("/session", async (HttpContext context, [FromServices] AppDbContext db, AuthCookies cookies, CancellationToken ct) =>
+            {
+                // The SPA's startup probe. Answering 200 for an anonymous visitor avoids a 401 on every first page load.
+                var id = context.User.GetUserId();
+                var user = id is null ? null : await db.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Id == id, ct);
+                var canRefresh = user is null && context.Request.Cookies.ContainsKey(cookies.RefreshName);
+                return Results.Ok(new SessionResponse(user is null ? null : UserDto.From(user), canRefresh));
+            })
+            .WithSummary("Who is signed in, if anyone. Never returns 401.");
+
         group.MapGet("/me", async ([FromServices] AppDbContext db, ClaimsPrincipal principal, CancellationToken ct) =>
             {
                 var id = principal.GetUserId();

@@ -28,6 +28,8 @@ export default tseslint.config(
     rules: {
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       '@typescript-eslint/consistent-type-imports': 'error',
+      // Radio cards wrap the input and nest their text a few elements deep; the default depth of 2 misses it.
+      'jsx-a11y/label-has-associated-control': ['error', { depth: 4 }],
     },
   },
   {

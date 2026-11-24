@@ -4,6 +4,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
+const apiProxy = { '/api': { target: process.env.API_URL ?? 'http://localhost:5149', changeOrigin: false } };
+
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -16,8 +18,15 @@ export default defineConfig({
     // Never inline fonts as data: URIs; the production CSP only allows fonts from 'self'.
     assetsInlineLimit: (file) => (/\.woff2?$/.test(file) ? false : undefined),
   },
-  server: { port: 5173, strictPort: true, fs: { allow: ['..'] } },
-  preview: { port: 4173, strictPort: true },
+  server: {
+    port: 5173,
+    strictPort: true,
+    fs: { allow: ['..'] },
+    // The browser only ever talks to its own origin. In development Vite forwards /api to the .NET API, and in
+    // production the web server does the same, so cookies stay first-party and CORS is never needed.
+    proxy: apiProxy,
+  },
+  preview: { port: 4173, strictPort: true, proxy: apiProxy },
   test: {
     globals: true,
     environment: 'jsdom',
