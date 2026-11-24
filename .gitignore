@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+*.tsbuildinfo
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# .NET (phase 2)
+bin/
+obj/
