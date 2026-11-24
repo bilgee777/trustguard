@@ -13,7 +13,7 @@ RUN npm run build \
   && node scripts/csp-hash.mjs dist/index.html > /tmp/theme-hash
 
 # ---- Runtime stage: static files and a reverse proxy to the API. No Node.js. ----
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+FROM nginxinc/nginx-unprivileged:1.31-alpine
 COPY --from=build /app/web/dist /usr/share/nginx/html
 COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY web/security-headers.conf /etc/nginx/snippets/security-headers.conf
