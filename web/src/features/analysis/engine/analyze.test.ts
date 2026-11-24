@@ -24,7 +24,7 @@ describe('analyze', () => {
   });
 
   it('detects invisible characters and look-alike letters', () => {
-    const result = run('Your Pаypal acc​ount needs attention');
+    const result = run('Your Pаypal acc\u200Bount needs attention');
     const ids = result.findings.map((f) => f.ruleId);
     expect(ids).toContain('obfuscation.invisible');
     expect(ids).toContain('obfuscation.mixed_script');
@@ -47,7 +47,9 @@ describe('analyze', () => {
   });
 
   it('has contributions that add up to the score and match findings', () => {
-    const result = run('Dear customer, your account will be suspended. Verify your account at http://bank-secure-login.top now');
+    const result = run(
+      'Dear customer, your account will be suspended. Verify your account at http://bank-secure-login.top now',
+    );
     expect(result.contributions.reduce((s, c) => s + c.points, 0)).toBe(result.score);
     expect(result.contributions.map((c) => c.findingId)).toEqual(result.findings.map((f) => f.id));
   });
@@ -65,10 +67,51 @@ describe('buildHighlights', () => {
   it('splits overlapping spans into segments that rebuild the original text', () => {
     const text = 'abcdefghij';
     const segments = buildHighlights(text, [
-      { id: 'a', ruleId: 'a', category: 'urgency', title: '', explanation: '', weight: 0.1, evidence: [], spans: [{ start: 2, end: 6 }] },
-      { id: 'b', ruleId: 'b', category: 'urgency', title: '', explanation: '', weight: 0.1, evidence: [], spans: [{ start: 4, end: 8 }] },
+      {
+        id: 'a',
+        ruleId: 'a',
+        category: 'urgency',
+        title: '',
+        explanation: '',
+        weight: 0.1,
+        evidence: [],
+        spans: [{ start: 2, end: 6 }],
+      },
+      {
+        id: 'b',
+        ruleId: 'b',
+        category: 'urgency',
+        title: '',
+        explanation: '',
+        weight: 0.1,
+        evidence: [],
+        spans: [{ start: 4, end: 8 }],
+      },
     ]);
     expect(segments.map((s) => s.text).join('')).toBe(text);
     expect(segments.map((s) => s.findingIds)).toEqual([[], ['a'], ['a', 'b'], ['b'], []]);
+  });
+});
+
+describe('sender checks', () => {
+  it('flags a look-alike sender domain and highlights it', () => {
+    const text = 'From: PayPal <service@paypa1-support.com>\nHello';
+    const finding = run(text, 'email').findings.find((f) => f.ruleId === 'sender.lookalike');
+    expect(finding?.title).toMatch(/PayPal/);
+    expect(finding && text.slice(finding.spans[0]?.start, finding.spans[0]?.end)).toBe('paypa1-support.com');
+  });
+
+  it('ignores ordinary sender domains', () => {
+    const ids = run('From: Priya <priya@acme-studio.com>', 'email').findings.map((f) => f.ruleId);
+    expect(ids).not.toContain('sender.lookalike');
+  });
+});
+
+describe('recommendations', () => {
+  it('marks at most three actions as primary', () => {
+    const result = run(
+      'URGENT: your PayPal account will be suspended. Verify your account and send the OTP code we sent you: http://paypa1-login.top',
+    );
+    expect(result.recommendations.filter((r) => r.priority === 'primary').length).toBeLessThanOrEqual(3);
   });
 });

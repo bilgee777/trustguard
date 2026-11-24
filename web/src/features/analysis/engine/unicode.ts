@@ -1,7 +1,7 @@
 import type { TextSpan } from './types';
 
 /** Characters that render as nothing but break keyword filters. */
-const INVISIBLE_CHARS = /[­​-‏⁠-⁤﻿]/gu;
+const INVISIBLE_CHARS = /[\u00AD\u200B-\u200F\u2060-\u2064\uFEFF]/gu;
 
 export function findInvisibleChars(text: string): TextSpan[] {
   return [...text.matchAll(INVISIBLE_CHARS)].map((m) => ({ start: m.index, end: m.index + m[0].length }));
@@ -37,9 +37,33 @@ export function findMixedScriptWords(text: string): TextSpan[] {
 }
 
 const HOMOGLYPHS: Record<string, string> = {
-  а: 'a', е: 'e', о: 'o', р: 'p', с: 'c', у: 'y', х: 'x', і: 'i', ј: 'j', ѕ: 's', ԁ: 'd', һ: 'h',
-  ӏ: 'l', ԛ: 'q', ԝ: 'w', ο: 'o', α: 'a', ν: 'v', ρ: 'p', τ: 't', ι: 'i', κ: 'k', ε: 'e', υ: 'u',
-  ı: 'i', ɡ: 'g', ℓ: 'l',
+  а: 'a',
+  е: 'e',
+  о: 'o',
+  р: 'p',
+  с: 'c',
+  у: 'y',
+  х: 'x',
+  і: 'i',
+  ј: 'j',
+  ѕ: 's',
+  ԁ: 'd',
+  һ: 'h',
+  ӏ: 'l',
+  ԛ: 'q',
+  ԝ: 'w',
+  ο: 'o',
+  α: 'a',
+  ν: 'v',
+  ρ: 'p',
+  τ: 't',
+  ι: 'i',
+  κ: 'k',
+  ε: 'e',
+  υ: 'u',
+  ı: 'i',
+  ɡ: 'g',
+  ℓ: 'l',
 };
 
 const LEET: Record<string, string> = { '0': 'o', '1': 'l', '3': 'e', '4': 'a', '5': 's', '7': 't', '@': 'a' };

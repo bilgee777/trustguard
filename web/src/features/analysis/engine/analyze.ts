@@ -126,12 +126,51 @@ function mergeUrlFindings(located: ExtractedUrl[], reports: UrlReport[]): Findin
   return [...merged.values()];
 }
 
+const EMAIL_PATTERN = /[\p{L}\p{N}._%+-]+@([\p{L}\p{N}-]+(?:\.[\p{L}\p{N}-]+)+)/gu;
+
+/**
+ * Sender addresses are excluded from link extraction, but a look-alike sender domain
+ * (service@paypa1-support.com) is one of the strongest phishing signals, so the domain
+ * part is run through the same look-alike checks as links.
+ */
+function runSenderChecks(text: string): Finding[] {
+  const spans: { start: number; end: number }[] = [];
+  let strongest: Finding | null = null;
+  for (const match of text.matchAll(EMAIL_PATTERN)) {
+    const domain = match[1] ?? '';
+    const lookalike = inspectUrl(domain).findings.find(
+      (f) => f.ruleId === 'url.brand-lookalike' || f.ruleId === 'url.punycode',
+    );
+    if (!lookalike) continue;
+    const start = match.index + match[0].length - domain.length;
+    spans.push({ start, end: start + domain.length });
+    strongest ??= {
+      id: 'sender.lookalike',
+      ruleId: 'sender.lookalike',
+      category: 'impersonation',
+      title: `Sender address: ${lookalike.title.charAt(0).toLowerCase()}${lookalike.title.slice(1)}`,
+      explanation: `The message comes from an address at ${domain}. ${lookalike.explanation} Display names are free to fake, so the domain after "@" is what counts.`,
+      weight: 0.5,
+      evidence: [domain],
+      spans: [],
+    };
+  }
+  return strongest ? [{ ...strongest, spans }] : [];
+}
+
 function overlaps(span: TextSpan, others: TextSpan[]): boolean {
   return others.some((o) => span.start < o.end && o.start < span.end);
 }
 
-function detectImpersonation(text: string, located: ExtractedUrl[], reports: UrlReport[], findings: Finding[]): Finding | null {
-  const asksForData = findings.some((f) => f.category === 'phishing' || f.category === 'personal_info' || f.category === 'advance_fee');
+function detectImpersonation(
+  text: string,
+  located: ExtractedUrl[],
+  reports: UrlReport[],
+  findings: Finding[],
+): Finding | null {
+  const asksForData = findings.some(
+    (f) => f.category === 'phishing' || f.category === 'personal_info' || f.category === 'advance_fee',
+  );
   for (const brand of BRANDS) {
     const pattern = new RegExp(`\\b(${brand.keywords.map((k) => k.replace(/\s+/g, '\\s+')).join('|')})\\b`, 'giu');
     const mentions = [...text.matchAll(pattern)]
@@ -224,6 +263,7 @@ export function analyze(input: AnalysisInput, options: AnalyzeOptions = {}): Ana
     ...runTextRules(normalizedInput),
     ...runObfuscationChecks(text),
     ...mergeUrlFindings(located, reports),
+    ...runSenderChecks(text),
   ];
   const impersonation = detectImpersonation(text, located, reports, findings);
   if (impersonation) findings.push(impersonation);

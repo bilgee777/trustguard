@@ -42,7 +42,7 @@ export function decodePunycodeLabel(input: string): string | null {
     output.push(code);
   }
 
-  for (let index = basicEnd > 0 ? basicEnd + 1 : 0; index < input.length; ) {
+  for (let index = basicEnd > 0 ? basicEnd + 1 : 0; index < input.length;) {
     const oldI = i;
     let w = 1;
     for (let k = BASE; ; k += BASE) {
@@ -68,8 +68,6 @@ export function decodePunycodeLabel(input: string): string | null {
 export function hostToUnicode(host: string): string {
   return host
     .split('.')
-    .map((label) =>
-      label.toLowerCase().startsWith('xn--') ? (decodePunycodeLabel(label.slice(4)) ?? label) : label,
-    )
+    .map((label) => (label.toLowerCase().startsWith('xn--') ? (decodePunycodeLabel(label.slice(4)) ?? label) : label))
     .join('.');
 }

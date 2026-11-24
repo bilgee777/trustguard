@@ -2,7 +2,14 @@ import { attributeScore, combineWeights, levelForScore } from './scoring';
 import type { Finding } from './types';
 
 const finding = (id: string, weight: number): Finding => ({
-  id, ruleId: id, category: 'urgency', title: id, explanation: '', weight, evidence: [], spans: [],
+  id,
+  ruleId: id,
+  category: 'urgency',
+  title: id,
+  explanation: '',
+  weight,
+  evidence: [],
+  spans: [],
 });
 
 describe('scoring', () => {
@@ -25,7 +32,14 @@ describe('scoring', () => {
 
   it('maps scores to levels at documented thresholds', () => {
     expect([0, 24, 25, 49, 50, 74, 75, 100].map(levelForScore)).toEqual([
-      'low', 'low', 'moderate', 'moderate', 'high', 'high', 'critical', 'critical',
+      'low',
+      'low',
+      'moderate',
+      'moderate',
+      'high',
+      'high',
+      'critical',
+      'critical',
     ]);
   });
 

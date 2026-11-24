@@ -6,15 +6,21 @@ const BY_CATEGORY: Partial<Record<IndicatorCategory, string[]>> = {
     'If you already entered a password, change it now and turn on two-factor authentication.',
   ],
   suspicious_link: ['Do not open the link. If you need to check it, use the URL Inspector here.'],
-  suspicious_domain: ['Compare the domain with the organisation’s real website. Look-alike domains differ by one or two characters.'],
-  impersonation: ['Contact the organisation using a phone number or website you find yourself, not one in the message.'],
+  suspicious_domain: [
+    'Compare the domain with the organisation’s real website. Look-alike domains differ by one or two characters.',
+  ],
+  impersonation: [
+    'Contact the organisation using a phone number or website you find yourself, not one in the message.',
+  ],
   personal_info: [
     'Never share one-time codes, card details or ID documents in reply to a message.',
     'If you shared card details, call your bank using the number on the back of your card.',
   ],
   advance_fee: ['Do not pay any fee, deposit or charge. Legitimate jobs, prizes and deliveries do not require one.'],
   fake_job: ['Check the company and recruiter on the company’s official careers page before replying.'],
-  unrealistic_earnings: ['Treat guaranteed returns as a red flag. Check the firm with your country’s financial regulator.'],
+  unrealistic_earnings: [
+    'Treat guaranteed returns as a red flag. Check the firm with your country’s financial regulator.',
+  ],
   urgency: ['Slow down. Pressure to act fast is a tactic, and real organisations will give you time.'],
   obfuscation: ['Hidden or look-alike characters are a deliberate trick. Treat the whole message as hostile.'],
 };
@@ -39,12 +45,16 @@ export function buildRecommendations(findings: Finding[], level: RiskLevel): Rec
 
   for (const category of categoriesByWeight) {
     (BY_CATEGORY[category] ?? []).forEach((text, index) => {
-      add(`${category}.${index}`, text, index === 0 && level !== 'low' ? 'primary' : 'secondary');
+      add(`${category}.${index}`, text, 'secondary');
     });
   }
 
   if (level === 'critical' || level === 'high') {
-    add('general.report', 'Report the message: forward scam SMS to your carrier’s spam number or use “Report junk” in your email app.', 'secondary');
+    add(
+      'general.report',
+      'Report the message: forward scam SMS to your carrier’s spam number or use “Report junk” in your email app.',
+      'secondary',
+    );
     add('general.block', 'Block the sender and delete the message once you have reported it.', 'secondary');
   }
   if (level === 'low') {
@@ -54,5 +64,12 @@ export function buildRecommendations(findings: Finding[], level: RiskLevel): Rec
       'primary',
     );
   }
-  return recommendations;
+  // At most three primary actions: when everything is highlighted, nothing is.
+  let primaryCount = 0;
+  return recommendations.map((r) => {
+    if (level === 'low') return r;
+    const priority = primaryCount < 3 ? 'primary' : 'secondary';
+    if (priority === 'primary') primaryCount++;
+    return { ...r, priority };
+  });
 }

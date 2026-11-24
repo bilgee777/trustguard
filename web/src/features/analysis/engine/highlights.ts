@@ -6,9 +6,7 @@ import type { Finding, HighlightSegment } from './types';
  * plain text with <mark> elements and no HTML injection risk.
  */
 export function buildHighlights(text: string, findings: Finding[]): HighlightSegment[] {
-  const spans = findings.flatMap((f) =>
-    f.spans.filter((s) => s.end > s.start).map((s) => ({ ...s, findingId: f.id })),
-  );
+  const spans = findings.flatMap((f) => f.spans.filter((s) => s.end > s.start).map((s) => ({ ...s, findingId: f.id })));
   const boundaries = [...new Set([0, text.length, ...spans.flatMap((s) => [s.start, s.end])])]
     .filter((b) => b >= 0 && b <= text.length)
     .sort((a, b) => a - b);

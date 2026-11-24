@@ -41,7 +41,9 @@ export const TEXT_RULES: TextRule[] = [
       'Messages that threaten suspension, fines or legal action are designed to trigger fear. Contact the organisation through its official app or number instead.',
     weight: 0.22,
     patterns: [
-      p(String.raw`\b(will be|has been|have been|is being) (suspended|locked|blocked|terminated|deactivated|disabled|closed|frozen|restricted)\b`),
+      p(
+        String.raw`\b(will be|has been|have been|is being) (suspended|locked|blocked|terminated|deactivated|disabled|closed|frozen|restricted)\b`,
+      ),
       p(String.raw`\b(legal action|arrest warrant|police|court summons|penalty|fined|late fee)\b`),
       p(String.raw`\b(unusual|suspicious|unauthori[sz]ed) (activity|sign-?in|login|transaction|access)\b`),
     ],
@@ -54,7 +56,9 @@ export const TEXT_RULES: TextRule[] = [
       'Being told to keep something secret isolates you from people who could warn you. Legitimate employers and banks do not ask for this.',
     weight: 0.22,
     patterns: [
-      p(String.raw`\b(keep (this|it) (confidential|secret|between us|private)|don'?t tell (anyone|your)|do not (tell|share this with|discuss))\b`),
+      p(
+        String.raw`\b(keep (this|it) (confidential|secret|between us|private)|don'?t tell (anyone|your)|do not (tell|share this with|discuss))\b`,
+      ),
     ],
   },
   {
@@ -65,7 +69,9 @@ export const TEXT_RULES: TextRule[] = [
       'A message that asks you to "verify" or "confirm" an account through a link is the classic phishing pattern. Open the official app or type the address yourself.',
     weight: 0.32,
     patterns: [
-      p(String.raw`\b(verify|confirm|validate|update|restore|reactivate|unlock)( your)? (account|identity|details|information|login|credentials|password|payment (details|method|information)|billing (details|information))\b`),
+      p(
+        String.raw`\b(verify|confirm|validate|update|restore|reactivate|unlock)( your)? (account|identity|details|information|login|credentials|password|payment (details|method|information)|billing (details|information))\b`,
+      ),
       p(String.raw`\b(log ?in|sign ?in)( now)? (to|and) (verify|confirm|restore|avoid|keep|secure|update)\b`),
       p(String.raw`\b(reset|change) your password\b`),
     ],
@@ -87,7 +93,9 @@ export const TEXT_RULES: TextRule[] = [
       'Companies you have an account with usually address you by name. A generic greeting suggests a message sent to thousands of people.',
     weight: 0.08,
     patterns: [
-      p(String.raw`\bdear (customer|user|client|member|account ?holder|valued (customer|member|client)|sir(\/| or )madam|beneficiary|applicant)\b`),
+      p(
+        String.raw`\bdear (customer|user|client|member|account ?holder|valued (customer|member|client)|sir(\/| or )madam|beneficiary|applicant)\b`,
+      ),
     ],
   },
   {
@@ -98,7 +106,9 @@ export const TEXT_RULES: TextRule[] = [
       'One-time codes prove that you are approving something. Anyone who asks you to share one is trying to log in or pay as you. No real company asks for these.',
     weight: 0.55,
     patterns: [
-      p(String.raw`\b(share|send|tell|give|forward|reply with|read out|provide)\b.{0,40}\b(code|otp|pin|passcode|verification number)\b`),
+      p(
+        String.raw`\b(share|send|tell|give|forward|reply with|read out|provide)\b.{0,40}\b(code|otp|pin|passcode|verification number)\b`,
+      ),
       p(String.raw`\b(code|otp|pin)\b.{0,30}\b(we|i) (just )?sent (to )?you\b`),
     ],
   },
@@ -110,8 +120,12 @@ export const TEXT_RULES: TextRule[] = [
       'Card numbers, CVV codes, ID scans and bank logins let criminals steal money or your identity. Never share them in reply to a message.',
     weight: 0.35,
     patterns: [
-      p(String.raw`\b(card (number|details)|cvv|cvc|security code|expiry date|pin (number|code)|online banking (password|login)|bank (login|password))\b`),
-      p(String.raw`\b(social security( number)?|ssn|national (id|insurance)( number)?|passport (number|copy|scan|photo)|(copy|scan|photo) of your (id|passport|driver'?s licen[cs]e)|mother'?s maiden name|date of birth)\b`),
+      p(
+        String.raw`\b(card (number|details)|cvv|cvc|security code|expiry date|pin (number|code)|online banking (password|login)|bank (login|password))\b`,
+      ),
+      p(
+        String.raw`\b(social security( number)?|ssn|national (id|insurance)( number)?|passport (number|copy|scan|photo)|(copy|scan|photo) of your (id|passport|driver'?s licen[cs]e)|mother'?s maiden name|date of birth)\b`,
+      ),
       p(String.raw`\b(seed phrase|recovery phrase|secret phrase|private key|12[- ]word phrase)\b`),
     ],
   },
@@ -123,7 +137,9 @@ export const TEXT_RULES: TextRule[] = [
       'Requests to pay a small fee, deposit or charge before you receive a parcel, job, prize or refund are the core of advance-fee fraud.',
     weight: 0.32,
     patterns: [
-      p(String.raw`\b(processing|registration|activation|customs|delivery|shipping|redelivery|clearance|release|admin(istration)?|training|onboarding|verification|application) (fee|charge|payment|cost)\b`),
+      p(
+        String.raw`\b(processing|registration|activation|customs|delivery|shipping|redelivery|clearance|release|admin(istration)?|training|onboarding|verification|application) (fee|charge|payment|cost)\b`,
+      ),
       p(String.raw`\b(pay|send|transfer|deposit)\b.{0,40}\b(fee|deposit|charge|upfront|in advance)\b`),
       p(String.raw`\b(small|one-time|refundable) (fee|payment|deposit|charge)\b`),
       p(String.raw`\b(outstanding|unpaid) (fee|amount|balance|charge|toll)\b`),
@@ -137,7 +153,9 @@ export const TEXT_RULES: TextRule[] = [
       'Gift cards, crypto and wire services are requested because payments cannot be reversed or traced. Legitimate businesses do not demand them.',
     weight: 0.4,
     patterns: [
-      p(String.raw`\b(gift ?cards?|itunes cards?|google play cards?|steam cards?|western union|moneygram|wire transfer)\b`),
+      p(
+        String.raw`\b(gift ?cards?|itunes cards?|google play cards?|steam cards?|western union|moneygram|wire transfer)\b`,
+      ),
       p(String.raw`\b(pay|send|transfer|deposit)\b.{0,30}\b(usdt|bitcoin|btc|eth|crypto(currency)?|wallet address)\b`),
     ],
   },
@@ -150,8 +168,12 @@ export const TEXT_RULES: TextRule[] = [
     weight: 0.25,
     boost: { job_offer: 1.3, whatsapp: 1.2 },
     patterns: [
-      p(String.raw`\b(no (experience|skills|qualifications|interview) (needed|required|necessary)|hired (immediately|instantly|today)|start (today|immediately))\b`),
-      p(String.raw`\b(like|rate|review|watch)\b.{0,20}\b(videos|posts|products|hotels|apps)\b.{0,40}\b(earn|paid|commission|\$|€|£)`),
+      p(
+        String.raw`\b(no (experience|skills|qualifications|interview) (needed|required|necessary)|hired (immediately|instantly|today)|start (today|immediately))\b`,
+      ),
+      p(
+        String.raw`\b(like|rate|review|watch)\b.{0,20}\b(videos|posts|products|hotels|apps)\b.{0,40}\b(earn|paid|commission|\$|€|£)`,
+      ),
       p(String.raw`\b(task-based|per task|commission per (task|order)|daily tasks|simple online tasks)\b`),
       p(String.raw`\bonly (need|requires?) (a )?(phone|smartphone|\d+ ?(minutes?|hours?) (a|per) day)\b`),
     ],
@@ -165,8 +187,12 @@ export const TEXT_RULES: TextRule[] = [
     weight: 0.28,
     boost: { job_offer: 1.3 },
     patterns: [
-      p(String.raw`\b(contact|message|text|add|reach|chat with)\b.{0,40}\b(on|via|through) (telegram|whatsapp|signal|wechat)\b`),
-      p(String.raw`\b(interview|onboarding|recruiter|hr manager|hiring manager)\b.{0,40}\b(telegram|whatsapp|signal)\b`),
+      p(
+        String.raw`\b(contact|message|text|add|reach|chat with)\b.{0,40}\b(on|via|through) (telegram|whatsapp|signal|wechat)\b`,
+      ),
+      p(
+        String.raw`\b(interview|onboarding|recruiter|hr manager|hiring manager)\b.{0,40}\b(telegram|whatsapp|signal)\b`,
+      ),
       p(String.raw`\b(t\.me|wa\.me)\/`),
     ],
   },
@@ -192,7 +218,9 @@ export const TEXT_RULES: TextRule[] = [
     weight: 0.3,
     boost: { job_offer: 1.2 },
     patterns: [
-      p(String.raw`\b(earn|make|get|receive)\b.{0,15}(\$|€|£|usd|eur)\s?\d[\d,.]*\s?k?\b.{0,20}\b(per|a|\/|each|every)\s?(day|daily|week|weekly|hour)\b`),
+      p(
+        String.raw`\b(earn|make|get|receive)\b.{0,15}(\$|€|£|usd|eur)\s?\d[\d,.]*\s?k?\b.{0,20}\b(per|a|\/|each|every)\s?(day|daily|week|weekly|hour)\b`,
+      ),
       p(String.raw`(\$|€|£)\s?\d[\d,.]*\s?k?\s?(\/|per|a)\s?(day|hour)\b`),
       p(String.raw`\b(guaranteed|risk[- ]free|fixed) (profit|returns?|income|earnings|payout)s?\b`),
       p(String.raw`\b(double|triple|10x) your (money|investment|crypto|bitcoin)\b`),
@@ -208,7 +236,9 @@ export const TEXT_RULES: TextRule[] = [
       'You cannot win a lottery or giveaway you never entered. "Claim your prize" messages usually lead to a fee request or a phishing page.',
     weight: 0.32,
     patterns: [
-      p(String.raw`\b(you('ve| have)? (won|been (selected|chosen))|congratulations\b.{0,40}\b(won|winner|selected|chosen|prize))\b`),
+      p(
+        String.raw`\b(you('ve| have)? (won|been (selected|chosen))|congratulations\b.{0,40}\b(won|winner|selected|chosen|prize))\b`,
+      ),
       p(String.raw`\b(claim|collect|redeem) your (prize|reward|gift|winnings|bonus|refund)\b`),
       p(String.raw`\b(lottery|jackpot|sweepstakes|lucky (winner|draw)|free (iphone|gift card|vacation))\b`),
     ],
@@ -221,7 +251,9 @@ export const TEXT_RULES: TextRule[] = [
       'Unsolicited crypto "opportunities", trading platforms and mentors are the leading form of investment fraud. Deposits are rarely recoverable.',
     weight: 0.2,
     patterns: [
-      p(String.raw`\b(crypto(currency)? (investment|trading|opportunity|platform|mentor)|trading (platform|signals|bot)|mining pool|airdrop|liquidity mining)\b`),
+      p(
+        String.raw`\b(crypto(currency)? (investment|trading|opportunity|platform|mentor)|trading (platform|signals|bot)|mining pool|airdrop|liquidity mining)\b`,
+      ),
       p(String.raw`\b(invest|deposit)\b.{0,30}\b(bitcoin|btc|usdt|eth|crypto)\b`),
     ],
   },
@@ -234,7 +266,9 @@ export const TEXT_RULES: TextRule[] = [
     weight: 0.2,
     boost: { sms: 1.2 },
     patterns: [
-      p(String.raw`\b(package|parcel|shipment|delivery|order)\b.{0,60}\b(failed|on hold|held|pending|could not be delivered|unable to deliver|undeliverable|returned|awaiting payment|incomplete address)\b`),
+      p(
+        String.raw`\b(package|parcel|shipment|delivery|order)\b.{0,60}\b(failed|on hold|held|pending|could not be delivered|unable to deliver|undeliverable|returned|awaiting payment|incomplete address)\b`,
+      ),
       p(String.raw`\b(reschedule|redeliver(y)?|re-delivery) (your )?(delivery|package|parcel)?\b`),
     ],
   },

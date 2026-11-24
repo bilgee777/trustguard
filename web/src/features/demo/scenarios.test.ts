@@ -7,7 +7,6 @@ describe('demo scenarios (calibration corpus)', () => {
     expect(result.level).toBe(scenario.expectedLevel);
   });
 
-
   it('runs every scenario through the live engine with no AI output', () => {
     for (const s of DEMO_SCENARIOS) {
       expect(analyze({ contentType: s.contentType, text: s.text }).aiSummary).toBeNull();

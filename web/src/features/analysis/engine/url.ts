@@ -1,19 +1,13 @@
 import { BRAND_TOKENS, findOfficialBrand, type Brand } from './brands';
-import {
-  HIGH_ABUSE_TLDS,
-  URL_SHORTENERS,
-  isNonPublicIPv4,
-  isNonPublicIPv6,
-  parseIPv4,
-  splitDomain,
-} from './domain';
+import { HIGH_ABUSE_TLDS, URL_SHORTENERS, isNonPublicIPv4, isNonPublicIPv6, parseIPv4, splitDomain } from './domain';
 import { hostToUnicode } from './punycode';
 import { combineWeights, levelForScore } from './scoring';
 import type { Finding, IndicatorCategory, UrlCheck, UrlCheckStatus, UrlReport } from './types';
 import { isMixedScript, levenshtein, skeleton } from './unicode';
 
 const DANGEROUS_SCHEMES = new Set(['javascript', 'data', 'vbscript', 'file']);
-const SENSITIVE_WORDS = /(log-?in|sign-?in|verify|verification|secure|account|update|unlock|confirm|billing|password|wallet|suspend|restore)/i;
+const SENSITIVE_WORDS =
+  /(log-?in|sign-?in|verify|verification|secure|account|update|unlock|confirm|billing|password|wallet|suspend|restore)/i;
 const MAX_URL_LENGTH = 2048;
 
 interface CheckSpec {
@@ -113,7 +107,8 @@ function brandLookalike(name: string, subdomain: string, host: string): CheckSpe
 export function inspectUrl(rawInput: string): UrlReport {
   const input = rawInput.trim();
   if (!input) return invalidReport(input, 'Enter a URL to inspect.');
-  if (input.length > MAX_URL_LENGTH) return invalidReport(input, `URLs longer than ${MAX_URL_LENGTH} characters are not inspected.`);
+  if (input.length > MAX_URL_LENGTH)
+    return invalidReport(input, `URLs longer than ${MAX_URL_LENGTH} characters are not inspected.`);
 
   const schemeProvided = hasExplicitScheme(input);
   let url: URL;
@@ -172,11 +167,13 @@ export function inspectUrl(rawInput: string): UrlReport {
   }
 
   if (url.username || url.password) {
+    const decoy = skeleton(decodeURIComponent(url.username));
+    const borrowed = BRAND_TOKENS.find(({ token }) => decoy.includes(token))?.brand;
     checks.push({
       id: 'userinfo',
       label: 'Hidden destination',
       status: 'fail',
-      detail: `Everything before "@" is ignored by the browser. This link really opens ${host}.`,
+      detail: `Everything before "@" is ignored by the browser${borrowed ? `, so "${borrowed.name}" there is only decoration` : ''}. This link really opens ${host}.`,
       finding: { category: 'suspicious_link', title: 'Text before "@" disguises the real site', weight: 0.45 },
     });
   }
@@ -198,7 +195,11 @@ export function inspectUrl(rawInput: string): UrlReport {
           : 'The link uses a raw IP address instead of a domain name, which hides who operates the site.',
       finding: {
         category: 'suspicious_domain',
-        title: nonPublic ? 'Link to a private network address' : obfuscated ? 'Disguised IP address' : 'Raw IP address instead of a domain',
+        title: nonPublic
+          ? 'Link to a private network address'
+          : obfuscated
+            ? 'Disguised IP address'
+            : 'Raw IP address instead of a domain',
         weight: obfuscated || nonPublic ? 0.5 : 0.35,
       },
     });
@@ -323,7 +324,9 @@ function finalize(
   officialBrand: Brand | null,
 ): UrlReport {
   const host = url.hostname.toLowerCase();
-  const split = splitDomain(unicodeHost ?? host);
+  // Ownership is reported in the ASCII (punycode) form: that is the name actually registered.
+  // The Unicode form is what an attacker wants you to see, so it is only shown as a display hint.
+  const split = splitDomain(host);
   const findings: Finding[] = specs.flatMap((spec) =>
     spec.finding
       ? [

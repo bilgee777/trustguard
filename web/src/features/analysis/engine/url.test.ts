@@ -30,6 +30,8 @@ describe('inspectUrl', () => {
   it('decodes punycode and detects mixed alphabets', () => {
     const report = inspectUrl('https://xn--pypal-4ve.com');
     expect(report.parts?.unicodeHost).toBe('pаypal.com');
+    // The owner is reported in its registered ASCII form, never the deceptive display form.
+    expect(report.parts?.registrableDomain).toBe('xn--pypal-4ve.com');
     expect(check('https://xn--pypal-4ve.com', 'punycode')?.status).toBe('fail');
     expect(ruleIds('https://xn--pypal-4ve.com')).toContain('url.brand-lookalike');
   });

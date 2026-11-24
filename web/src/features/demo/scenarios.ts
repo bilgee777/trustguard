@@ -61,7 +61,8 @@ Please keep this between us, the group is private.`,
     id: 'phishing-email',
     title: 'Phishing email',
     contentType: 'email',
-    lesson: 'The sender and link replace the letter “l” with the digit “1”, and the real domain is account-review.info.',
+    lesson:
+      'The sender and link replace the letter “l” with the digit “1”, and the real domain is account-review.info.',
     text: `From: PayPal Service <service@paypa1-support.com>
 Subject: Your account has been limited
 
@@ -79,7 +80,8 @@ PayPal Security Team`,
     id: 'legitimate-message',
     title: 'Legitimate message',
     contentType: 'email',
-    lesson: 'A shipping notice with no requests and a link to the official domain. Low risk still means “verify if in doubt”.',
+    lesson:
+      'A shipping notice with no requests and a link to the official domain. Low risk still means “verify if in doubt”.',
     text: `Hi Sam,
 
 Your Amazon order of "Wireless Keyboard" has shipped and should arrive on Thursday. You can track it any time in the Amazon app or under Your Orders:
