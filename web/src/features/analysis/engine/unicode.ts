@@ -7,19 +7,34 @@ export function findInvisibleChars(text: string): TextSpan[] {
   return [...text.matchAll(INVISIBLE_CHARS)].map((m) => ({ start: m.index, end: m.index + m[0].length }));
 }
 
-const SCRIPT_TESTS: [string, RegExp][] = [
-  ['Latin', /\p{Script=Latin}/u],
-  ['Cyrillic', /\p{Script=Cyrillic}/u],
-  ['Greek', /\p{Script=Greek}/u],
-  ['Armenian', /\p{Script=Armenian}/u],
+/**
+ * Script detection by explicit code-point ranges rather than \p{Script=...}: the same
+ * table is used by the C# engine (where Unicode script properties are unavailable),
+ * so both engines classify every character identically.
+ */
+const SCRIPT_RANGES: [string, number, number][] = [
+  ['Latin', 0x41, 0x5a],
+  ['Latin', 0x61, 0x7a],
+  ['Latin', 0xc0, 0x24f],
+  ['Latin', 0x1e00, 0x1eff],
+  ['Greek', 0x370, 0x3ff],
+  ['Greek', 0x1f00, 0x1fff],
+  ['Cyrillic', 0x400, 0x52f],
+  ['Armenian', 0x530, 0x58f],
 ];
+
+export function scriptOf(codePoint: number): string | null {
+  for (const [name, from, to] of SCRIPT_RANGES) {
+    if (codePoint >= from && codePoint <= to) return name;
+  }
+  return null;
+}
 
 export function scriptsIn(word: string): Set<string> {
   const scripts = new Set<string>();
-  for (const char of word) {
-    for (const [name, test] of SCRIPT_TESTS) {
-      if (test.test(char)) scripts.add(name);
-    }
+  for (let i = 0; i < word.length; i++) {
+    const script = scriptOf(word.charCodeAt(i));
+    if (script) scripts.add(script);
   }
   return scripts;
 }

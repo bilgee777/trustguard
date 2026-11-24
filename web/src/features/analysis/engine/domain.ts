@@ -1,33 +1,11 @@
+import domainsData from '@shared/engine/domains.json';
+
 /**
  * Simplified registrable-domain logic. A production system should use the full
- * Public Suffix List (publicsuffix.org); this subset covers the most common
+ * Public Suffix List (publicsuffix.org); the shared list covers the most common
  * multi-label suffixes and is documented as a known limitation.
  */
-const MULTI_LABEL_SUFFIXES = new Set([
-  'co.uk',
-  'org.uk',
-  'gov.uk',
-  'ac.uk',
-  'me.uk',
-  'com.tr',
-  'org.tr',
-  'net.tr',
-  'gov.tr',
-  'edu.tr',
-  'gen.tr',
-  'com.au',
-  'net.au',
-  'org.au',
-  'co.nz',
-  'co.jp',
-  'co.in',
-  'co.za',
-  'com.br',
-  'com.mx',
-  'com.cn',
-  'com.ar',
-  'com.sg',
-]);
+const MULTI_LABEL_SUFFIXES = new Set(domainsData.multiLabelSuffixes);
 
 export interface DomainSplit {
   registrable: string;
@@ -51,56 +29,10 @@ export function splitDomain(host: string): DomainSplit {
   };
 }
 
-export const URL_SHORTENERS = new Set([
-  'bit.ly',
-  'tinyurl.com',
-  't.co',
-  'goo.gl',
-  'ow.ly',
-  'is.gd',
-  'buff.ly',
-  'rebrand.ly',
-  'cutt.ly',
-  'shorturl.at',
-  'rb.gy',
-  'tiny.cc',
-  's.id',
-  't.ly',
-  'lnkd.in',
-  'bl.ink',
-  'v.gd',
-  'shorturl.gg',
-]);
+export const URL_SHORTENERS = new Set(domainsData.urlShorteners);
 
 /** TLDs disproportionately used in abuse reports. Presence alone is a weak signal. */
-export const HIGH_ABUSE_TLDS = new Set([
-  'zip',
-  'mov',
-  'xyz',
-  'top',
-  'click',
-  'link',
-  'buzz',
-  'rest',
-  'gq',
-  'tk',
-  'ml',
-  'cf',
-  'ga',
-  'work',
-  'support',
-  'country',
-  'kim',
-  'loan',
-  'win',
-  'bid',
-  'icu',
-  'cyou',
-  'sbs',
-  'cfd',
-  'monster',
-  'quest',
-]);
+export const HIGH_ABUSE_TLDS = new Set(domainsData.highAbuseTlds);
 
 export function parseIPv4(host: string): number[] | null {
   const parts = host.split('.');

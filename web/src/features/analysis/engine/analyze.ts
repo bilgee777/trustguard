@@ -53,7 +53,7 @@ function runTextRules({ text, contentType }: AnalysisInput): Finding[] {
       category: rule.category,
       title: rule.title,
       explanation: rule.explanation,
-      weight: Math.min(rule.weight * (rule.boost?.[contentType] ?? 1), MAX_WEIGHT),
+      weight: Math.min(rule.weight * (rule.boost[contentType] ?? 1), MAX_WEIGHT),
       evidence: collectEvidence(text, spans),
       spans,
     });
@@ -253,7 +253,11 @@ function createId(): string {
 }
 
 export function analyze(input: AnalysisInput, options: AnalyzeOptions = {}): AnalysisResult {
-  const text = input.text.slice(0, MAX_INPUT_LENGTH);
+  // Line endings are normalized first: regex "." treats \r differently in JS and .NET, so CRLF text
+  // pasted from Windows would otherwise score differently in the two engines. toWellFormed() then
+  // replaces unpaired surrogates (including one left by cutting through an emoji at the length
+  // limit), which cannot be encoded as UTF-8 or JSON.
+  const text = input.text.replace(/\r\n?/g, '\n').slice(0, MAX_INPUT_LENGTH).toWellFormed();
   const normalizedInput = { ...input, text };
 
   const located = locateUrls(normalizedInput);

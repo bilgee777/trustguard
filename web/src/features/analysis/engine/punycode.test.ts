@@ -13,3 +13,15 @@ describe('punycode decoding', () => {
     expect(decodePunycodeLabel('99999999999999')).toBeNull();
   });
 });
+
+describe('punycode hardening', () => {
+  // These labels decode to code points above U+10FFFF. Before the fix they made
+  // String.fromCodePoint throw a RangeError, which would have crashed analysis of a crafted link.
+  it.each(['b922i', 'gb75y', 'ox27u'])('returns null instead of throwing for %s', (label) => {
+    expect(decodePunycodeLabel(label)).toBeNull();
+  });
+
+  it('refuses to build a URL report from such a host without throwing', () => {
+    expect(hostToUnicode('xn--b922i.com')).toBe('xn--b922i.com');
+  });
+});

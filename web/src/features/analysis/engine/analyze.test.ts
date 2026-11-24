@@ -115,3 +115,21 @@ describe('recommendations', () => {
     expect(result.recommendations.filter((r) => r.priority === 'primary').length).toBeLessThanOrEqual(3);
   });
 });
+
+describe('input normalization', () => {
+  it('replaces an unpaired surrogate so the text can always be encoded', () => {
+    const result = run('a\ud800b URGENT: verify your account');
+    expect(result.text).toBe('a�b URGENT: verify your account');
+  });
+
+  it('never leaves half an emoji when clipping at the length limit', () => {
+    const result = run(`${'a'.repeat(9999)}\u{1F600} tail`);
+    expect(result.text).toHaveLength(10_000);
+    expect(result.text.endsWith('�')).toBe(true);
+    expect(() => new TextEncoder().encode(result.text)).not.toThrow();
+  });
+
+  it('normalizes CR and CRLF line endings', () => {
+    expect(run('a\r\nb\rc').text).toBe('a\nb\nc');
+  });
+});

@@ -1,3 +1,4 @@
+import domainsData from '@shared/engine/domains.json';
 import { BRAND_TOKENS, findOfficialBrand, type Brand } from './brands';
 import { HIGH_ABUSE_TLDS, URL_SHORTENERS, isNonPublicIPv4, isNonPublicIPv6, parseIPv4, splitDomain } from './domain';
 import { hostToUnicode } from './punycode';
@@ -17,6 +18,15 @@ interface CheckSpec {
   detail: string;
   /** Present only for warn/fail checks that should contribute to the risk score. */
   finding?: { category: IndicatorCategory; title: string; weight: number };
+}
+
+/** decodeURIComponent throws on a stray "%" (e.g. "https://100%@host"); user text must never crash analysis. */
+function safeDecode(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function hasExplicitScheme(value: string): boolean {
@@ -167,7 +177,7 @@ export function inspectUrl(rawInput: string): UrlReport {
   }
 
   if (url.username || url.password) {
-    const decoy = skeleton(decodeURIComponent(url.username));
+    const decoy = skeleton(safeDecode(url.username));
     const borrowed = BRAND_TOKENS.find(({ token }) => decoy.includes(token))?.brand;
     checks.push({
       id: 'userinfo',
@@ -375,9 +385,7 @@ export interface ExtractedUrl {
   end: number;
 }
 
-const KNOWN_TLDS =
-  'com|net|org|io|co|info|biz|me|app|dev|ai|gov|edu|uk|de|fr|es|it|nl|tr|ru|cn|in|br|au|ca|us|eu|ly|gl|gd|at|to|cc|id|' +
-  [...HIGH_ABUSE_TLDS].join('|');
+const KNOWN_TLDS = [...domainsData.bareDomainTlds, ...HIGH_ABUSE_TLDS].join('|');
 
 const URL_PATTERN = new RegExp(
   String.raw`(?:(?:https?|javascript|data):[^\s<>"'\x60]+|www\.[^\s<>"'\x60]+|(?<![@\p{L}\p{N}.-])(?:[\p{L}\p{N}-]+\.)+(?:${KNOWN_TLDS})(?![\p{L}\p{N}-])(?::\d{2,5})?(?:[/?#][^\s<>"'\x60]*)?)`,
