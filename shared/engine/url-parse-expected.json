@@ -1,5 +1,4 @@
 {
- "node": "v22.23.5",
  "cases": [
   {
    "input": "https://a.com/a^b|c{d}e`f",

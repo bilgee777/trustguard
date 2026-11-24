@@ -12,15 +12,14 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-defaults:
-  run:
-    working-directory: web
-
 jobs:
-  quality:
-    name: Lint, type-check, unit tests, build
+  web:
+    name: Web (lint, types, unit tests, build)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -33,13 +32,45 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - name: Golden files still match the TypeScript engine
+        # The C# engine is tested against these files. If a rule or the engine changed without
+        # regenerating them (npm run golden), the two engines would silently drift apart.
+        run: |
+          npm run golden
+          git diff --exit-code -- ../shared
+      - name: No known vulnerabilities in production dependencies
+        run: npm audit --omit=dev --audit-level=high
       - run: npm run build
 
-  e2e:
-    name: End-to-end and accessibility tests
-    needs: quality
+  api:
+    name: API (build and tests against PostgreSQL)
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet restore
+      - run: dotnet build --no-restore -c Release
+      - name: Tests (the API tests start PostgreSQL with Testcontainers)
+        run: dotnet test --no-build -c Release
+      - name: No known vulnerabilities in NuGet packages
+        run: |
+          dotnet list package --vulnerable --include-transitive 2>&1 | tee audit.txt
+          ! grep -q "has the following vulnerable packages" audit.txt
+
+  e2e:
+    name: E2E (anonymous flows and accessibility)
+    needs: web
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -53,24 +84,119 @@ jobs:
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-anonymous
+          path: web/playwright-report
+          retention-days: 7
+
+  e2e-accounts:
+    name: E2E (accounts through web, API and PostgreSQL)
+    needs: [web, api]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: trustguard
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: trustguard
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U trustguard"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      E2E_API: '1'
+      # 127.0.0.1, not localhost: the runner may resolve localhost to IPv6, where the API is not listening.
+      API_URL: http://127.0.0.1:5149
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Start the API
+        working-directory: api
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+          ASPNETCORE_URLS: http://127.0.0.1:5149
+          ConnectionStrings__Default: Host=localhost;Port=5432;Database=trustguard;Username=trustguard;Password=ci-only-password
+          Jwt__SigningKey: ci-only-signing-key-ci-only-signing-key-0123456789
+          Cookies__Secure: 'false'
+          Database__MigrateOnStartup: 'true'
+          # Test-only relaxations. Production keeps the defaults (210,000 hash iterations, 10 attempts a minute).
+          Security__PasswordHashIterations: '1000'
+          Security__AuthAttemptsPerMinute: '1000'
+        run: |
+          dotnet publish src/TrustGuard.Api -c Release -o "$RUNNER_TEMP/api"
+          nohup dotnet "$RUNNER_TEMP/api/TrustGuard.Api.dll" > "$RUNNER_TEMP/api.log" 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fs http://127.0.0.1:5149/api/health/ready && exit 0
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/api.log"
+          exit 1
+      - working-directory: web
+        run: npm ci
+      - working-directory: web
+        run: npx playwright install --with-deps chromium
+      - working-directory: web
+        run: npm run test:e2e
+      - if: failure()
+        run: cat "$RUNNER_TEMP/api.log" || true
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-accounts
           path: web/playwright-report
           retention-days: 7
 
   docker:
-    name: Container image builds
-    needs: quality
+    name: Docker (images build and the stack works)
+    needs: [web, api]
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t trustguard-web:ci .
-      - name: Smoke test security headers
+      - name: Throwaway secrets for this run
         run: |
-          docker run -d --name web -p 8080:8080 trustguard-web:ci
-          for i in $(seq 1 20); do curl -fs http://localhost:8080/healthz && break; sleep 1; done
-          headers=$(curl -sI http://localhost:8080/)
+          {
+            echo "POSTGRES_PASSWORD=$(openssl rand -hex 16)"
+            echo "JWT_SIGNING_KEY=$(openssl rand -base64 48)"
+            echo "COOKIES_SECURE=false"
+          } > .env
+      - name: Build and start the whole stack (waits for every healthcheck)
+        run: docker compose up -d --build --wait --wait-timeout 240
+      - name: Smoke test through the web server
+        run: |
+          set -euo pipefail
+          B=http://127.0.0.1:8080
+          curl -fs "$B/healthz" > /dev/null
+          curl -fs "$B/api/health/ready" | grep -q '"status":"ok"'
+
+          headers=$(curl -sI "$B/")
           echo "$headers"
-          echo "$headers" | grep -qi "content-security-policy: .*connect-src 'none'"
+          echo "$headers" | grep -qi "content-security-policy: .*connect-src 'self'"
           echo "$headers" | grep -qi "x-content-type-options: nosniff"
           ! echo "$headers" | grep -q "__THEME_SCRIPT_HASH__"
+
+          jar=$(mktemp)
+          curl -fs -c "$jar" "$B/api/auth/csrf" > /dev/null
+          token=$(awk '$6=="tg_csrf"{print $7}' "$jar")
+          body='{"contentType":"sms","text":"URGENT: verify your account"}'
+
+          same=$(curl -s -o /dev/null -w '%{http_code}' -b "$jar" -X POST "$B/api/analyses" \
+            -H 'Content-Type: application/json' -H "Origin: $B" -H "X-CSRF-Token: $token" -d "$body")
+          foreign=$(curl -s -o /dev/null -w '%{http_code}' -b "$jar" -X POST "$B/api/analyses" \
+            -H 'Content-Type: application/json' -H 'Origin: http://evil.example' -H "X-CSRF-Token: $token" -d "$body")
+          echo "same-origin: $same, foreign origin: $foreign"
+          [ "$same" = 200 ] && [ "$foreign" = 403 ]
+      - name: Container logs
+        if: failure()
+        run: docker compose logs --no-color
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

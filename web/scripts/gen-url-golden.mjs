@@ -27,7 +27,7 @@ const expected = cases.map((input) => {
 
 writeFileSync(
   new URL('url-parse-expected.json', dir),
-  `${JSON.stringify({ node: process.version, cases: expected }, null, 1)}\n`,
+  `${JSON.stringify({ cases: expected }, null, 1)}\n`,
 );
 console.log(
   `${expected.filter((c) => c.expected).length} parsed, ${expected.filter((c) => !c.expected).length} rejected (Node ${process.version})`,
