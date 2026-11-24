@@ -21,10 +21,10 @@ public static class EngineJson
         return options;
     }
 
-    internal static string EnumName<T>(T value) where T : struct, Enum =>
+    public static string EnumName<T>(T value) where T : struct, Enum =>
         JsonNamingPolicy.SnakeCaseLower.ConvertName(value.ToString());
 
-    internal static T ParseEnum<T>(string value, string context) where T : struct, Enum
+    public static T ParseEnum<T>(string value, string context) where T : struct, Enum
     {
         foreach (var candidate in Enum.GetValues<T>())
         {
