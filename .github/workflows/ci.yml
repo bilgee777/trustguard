@@ -41,6 +41,8 @@ jobs:
       - name: No known vulnerabilities in production dependencies
         run: npm audit --omit=dev --audit-level=high
       - run: npm run build
+      - name: Vercel CSP hash matches the built app
+        run: npm run vercel:csp
 
   api:
     name: API (build and tests against PostgreSQL)

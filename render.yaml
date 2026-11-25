@@ -1,0 +1,32 @@
+# Render Blueprint for the API. The web app is deployed on Vercel (see vercel.json) and forwards /api here.
+# Secrets are never written in this file: `sync: false` makes Render ask for the value in its dashboard.
+services:
+  - type: web
+    name: trustguard-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./api/Dockerfile
+    # The engine embeds shared/engine/*.json, so the build context is the repository root.
+    dockerContext: .
+    healthCheckPath: /api/health/live
+    # Deploy only after the GitHub checks (CI) pass.
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PORT
+        value: '8080'
+      - key: ConnectionStrings__Default
+        sync: false # Npgsql format; see docs/deployment.md
+      - key: Jwt__SigningKey
+        generateValue: true
+      - key: Cookies__Secure
+        value: 'true'
+      - key: Database__MigrateOnStartup
+        value: 'true'
+      - key: Security__AllowedOrigins__0
+        sync: false # your Vercel production URL, e.g. https://trustguard.vercel.app
+      # Render's proxy addresses are not published, so trust X-Forwarded-* from any peer. The service is only
+      # reachable through Render's edge, which sets these headers.
+      - key: Security__TrustedProxyNetworks__0
+        value: 0.0.0.0/0
+      - key: Security__TrustedProxyNetworks__1
+        value: ::/0

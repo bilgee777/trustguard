@@ -167,9 +167,12 @@ The account E2E test needs the API and a database; set `E2E_API=1` and see `e2e-
 
 ## Deployment
 
-The containers are production-shaped: health endpoints (`/api/health/live`, `/api/health/ready`), configuration only through environment variables, non-root users, read-only filesystems. The target is **Azure Container Apps** with Azure Database for PostgreSQL and secrets in Key Vault.
+The containers are production-shaped: health endpoints (`/api/health/live`, `/api/health/ready`), configuration only through environment variables, non-root users, read-only filesystems.
 
-> The Azure deployment itself has not been run against a live subscription yet. It is part of phase 4, together with a verified automated pipeline. Behind a TLS-terminating ingress, set `COOKIES_SECURE=true` and configure the proxy networks so rate limits see real client addresses.
+- **Free hosting:** web on **Vercel**, API on **Render** (Docker), database on **Neon**. Vercel proxies `/api/*` to Render so cookies stay first-party. Step by step in [docs/deployment.md](docs/deployment.md).
+- **Planned target:** Azure Container Apps with Azure Database for PostgreSQL and secrets in Key Vault (phase 4).
+
+> These deployment files are written and the pieces are tested locally, but the live Vercel and Render deployment has not been run yet. Behind any TLS-terminating proxy, set `COOKIES_SECURE=true` and configure the trusted proxy networks so rate limits see real client addresses.
 
 ## Roadmap
 

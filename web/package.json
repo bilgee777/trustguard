@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "vercel:csp": "node scripts/vercel-csp.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc -b",
